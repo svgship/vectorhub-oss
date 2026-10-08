@@ -99,8 +99,7 @@ export const reactExporter: Exporter = {
   language: 'tsx',
   generate: (doc, options = {}) => {
     const name = options.componentName ?? 'Icon'
-    const jsx = serializeSvg(doc, options)
-      .replace(/ xmlns="[^"]*"/, '')
+    const jsx = serializeSvg(doc, options).replace(/ xmlns="[^"]*"/, '')
     return [
       `import type { SVGProps } from 'react'`,
       ``,
