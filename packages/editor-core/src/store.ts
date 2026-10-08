@@ -33,6 +33,24 @@ export interface UpdateNodePatch {
   style?: Record<string, string>
 }
 
+/** 代码面板的配置项（PRD §7.3）。 */
+export interface CodeOptions {
+  /** React / Vue 导出的组件名。 */
+  componentName: string
+  /** 导出时把颜色替换为 `currentColor`。 */
+  currentColor: boolean
+}
+
+/** 代码面板的默认导出目标，与 `@vectorhub/codegen` 的 exporter id 对应。 */
+export const DEFAULT_CODE_TARGET = 'svg'
+
+/**
+ * 默认代码配置。
+ * `currentColor` 必须与 `DEFAULT_CODE_TARGET` 对应目标的 `currentColorByDefault` 一致
+ * （独立 SVG 文件默认关，否则单独打开会被渲染成黑色）。
+ */
+export const DEFAULT_CODE_OPTIONS: CodeOptions = { componentName: 'Icon', currentColor: false }
+
 export interface EditorState {
   document: VectorDocument
   selection: readonly string[]
@@ -40,8 +58,14 @@ export interface EditorState {
   viewport: Viewport
   past: readonly VectorDocument[]
   future: readonly VectorDocument[]
+  /** 代码面板当前选中的导出目标。 */
+  codeTarget: string
+  codeOptions: CodeOptions
 
   setTool: (tool: EditorTool) => void
+
+  setCodeTarget: (target: string) => void
+  setCodeOptions: (patch: Partial<CodeOptions>) => void
 
   select: (ids: readonly string[]) => void
   toggleSelect: (id: string) => void
@@ -99,8 +123,14 @@ export const useEditorStore = create<EditorState>((set) => ({
   viewport: DEFAULT_VIEWPORT,
   past: [],
   future: [],
+  codeTarget: DEFAULT_CODE_TARGET,
+  codeOptions: DEFAULT_CODE_OPTIONS,
 
   setTool: (tool) => set({ tool }),
+
+  setCodeTarget: (codeTarget) => set({ codeTarget }),
+
+  setCodeOptions: (patch) => set((state) => ({ codeOptions: { ...state.codeOptions, ...patch } })),
 
   select: (ids) => set({ selection: [...ids] }),
 

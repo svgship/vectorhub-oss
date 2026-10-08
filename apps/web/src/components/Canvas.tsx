@@ -4,6 +4,7 @@ import { findNode, getNodeBounds, unionBounds, type ResizeHandle } from '@vector
 import { useNodeDrag } from '../hooks/useNodeDrag'
 import { usePanZoom } from '../hooks/usePanZoom'
 import { SHAPE_PRESETS } from '../lib/sample-shapes'
+import { useSessionStore } from '../lib/session-store'
 import { NodeView } from './NodeView'
 import { SelectionOverlay, type SelectionRect } from './SelectionOverlay'
 import { SnapGuides } from './SnapGuides'
@@ -36,6 +37,8 @@ export function Canvas() {
   const select = useEditorStore((state) => state.select)
   const toggleSelect = useEditorStore((state) => state.toggleSelect)
   const clearSelection = useEditorStore((state) => state.clearSelection)
+  // PRD §6.3：分享链接打开的是只读副本，改动不会落盘，所以干脆别让用户改。
+  const readOnly = useSessionStore((state) => state.readOnly)
 
   const {
     containerRef,
@@ -88,7 +91,7 @@ export function Canvas() {
     const alreadySelected = selection.includes(nodeId)
     const nextSelection = alreadySelected ? selection : [nodeId]
     if (!alreadySelected) select([nodeId])
-    if (tool === 'select') beginMove(event, nextSelection, viewport)
+    if (tool === 'select' && !readOnly) beginMove(event, nextSelection, viewport)
   }
 
   const handleHandlePointerDown = (
@@ -156,7 +159,7 @@ export function Canvas() {
               bounds={selectionBounds}
               nodeBounds={selection.length > 1 ? selectionRects : []}
               zoom={viewport.zoom}
-              showHandles={tool === 'select'}
+              showHandles={tool === 'select' && !readOnly}
               onHandlePointerDown={handleHandlePointerDown}
             />
           ) : null}
@@ -173,6 +176,7 @@ export function Canvas() {
             type="button"
             title={`插入${preset.label}`}
             onClick={() => addNode(preset.type, preset.attrs)}
+            disabled={readOnly}
             className={`${OVERLAY_BUTTON} text-xs`}
           >
             {preset.label}

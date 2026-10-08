@@ -2,11 +2,13 @@ import { useMemo } from 'react'
 import { serializeSvg } from '@vectorhub/codegen'
 import { useEditorStore } from '@vectorhub/editor-core'
 import { countNodes } from '@vectorhub/svg-model'
+import { useSessionStore } from '../lib/session-store'
 
 export function StatusBar() {
   const doc = useEditorStore((state) => state.document)
   const zoom = useEditorStore((state) => state.viewport.zoom)
   const selection = useEditorStore((state) => state.selection)
+  const readOnly = useSessionStore((state) => state.readOnly)
 
   const nodeCount = useMemo(() => countNodes(doc.root), [doc.root])
   const estimatedSize = useMemo(() => new Blob([serializeSvg(doc)]).size, [doc])
@@ -17,7 +19,9 @@ export function StatusBar() {
       <span>选中 {selection.length}</span>
       <span>节点数 {nodeCount}</span>
       <span>预估 {(estimatedSize / 1024).toFixed(1)}KB</span>
-      <span className="ml-auto text-emerald-400">状态：本地草稿</span>
+      <span className="ml-auto text-emerald-400">
+        {readOnly ? '状态：只读分享' : '状态：本地草稿'}
+      </span>
     </footer>
   )
 }

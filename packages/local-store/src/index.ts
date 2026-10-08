@@ -61,9 +61,11 @@ export function getDb(): Promise<IDBPDatabase<VectorHubDB>> {
   return dbPromise
 }
 
+/** 按最近更新排序（最新的在前），供项目抽屉与「打开上次的草稿」使用。 */
 export async function listProjects(): Promise<ProjectRecord[]> {
   const db = await getDb()
-  return db.getAllFromIndex('projects', 'updatedAt')
+  const projects = await db.getAllFromIndex('projects', 'updatedAt')
+  return projects.reverse()
 }
 
 export async function putProject(project: ProjectRecord): Promise<void> {

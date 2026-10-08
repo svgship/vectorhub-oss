@@ -1,4 +1,8 @@
 import { canRedo, canUndo, useEditorStore } from '@vectorhub/editor-core'
+import { ExportMenu } from './ExportMenu'
+import { ProjectName } from './ProjectName'
+import { SaveStatus } from './SaveStatus'
+import { ShareButton } from './ShareButton'
 
 export function TopBar() {
   const undo = useEditorStore((state) => state.undo)
@@ -10,13 +14,8 @@ export function TopBar() {
     <header className="flex h-12 shrink-0 items-center justify-between gap-4 border-b border-slate-800 px-4">
       <div className="flex items-center gap-3">
         <span className="font-semibold tracking-tight text-white">VectorHub</span>
-        <button
-          type="button"
-          className="rounded px-2 py-1 text-sm text-slate-300 hover:bg-slate-800"
-        >
-          未命名项目 ▾
-        </button>
-        <span className="text-xs text-emerald-400">已保存</span>
+        <ProjectName />
+        <SaveStatus />
       </div>
 
       <div className="flex items-center gap-1 text-sm">
@@ -39,12 +38,8 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-1 text-sm">
-        <button type="button" className="rounded px-2 py-1 hover:bg-slate-800">
-          导出
-        </button>
-        <button type="button" className="rounded px-2 py-1 hover:bg-slate-800">
-          分享
-        </button>
+        <ExportMenu />
+        <ShareButton />
         <button
           type="button"
           className="rounded border border-slate-700 px-2 py-1 text-xs text-slate-400 hover:bg-slate-800"
