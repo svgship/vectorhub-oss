@@ -1,0 +1,17 @@
+node_modules/
+dist/
+dist-ssr/
+coverage/
+*.tsbuildinfo
+.pnpm-store/
+
+# Local env / editor
+.env
+.env.*
+!.env.example
+.DS_Store
+.vite/
+
+# Logs
+*.log
+pnpm-debug.log*

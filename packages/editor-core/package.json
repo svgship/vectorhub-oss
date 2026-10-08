@@ -1,0 +1,16 @@
+{
+  "name": "@vectorhub/editor-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@vectorhub/svg-model": "workspace:*",
+    "zustand": "^5.0.2"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

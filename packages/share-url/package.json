@@ -1,0 +1,16 @@
+{
+  "name": "@vectorhub/share-url",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@vectorhub/svg-model": "workspace:*",
+    "lz-string": "^1.5.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}
