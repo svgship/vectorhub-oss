@@ -60,10 +60,30 @@ export function findNode(nodes: readonly VectorNode[], id: string): VectorNode |
 
 export function countNodes(nodes: readonly VectorNode[]): number {
   let total = 0
-  walkNodes(nodes, () => {
+  walkVisibleNodes(nodes, () => {
     total += 1
   })
   return total
+}
+
+/**
+ * 遍历「用户可见」的节点，跳过 `defs` 及其子树。
+ *
+ * 渐变定义住在 defs 里，但它们是资源而不是图形：出现在全选、节点计数、
+ * 对齐这些地方只会添乱。
+ */
+export function walkVisibleNodes(
+  nodes: readonly VectorNode[],
+  visit: (node: VectorNode, parent: VectorNode | null) => void,
+  parent: VectorNode | null = null,
+): void {
+  for (const node of nodes) {
+    if (node.type === 'defs') continue
+    visit(node, parent)
+    if (node.children?.length) {
+      walkVisibleNodes(node.children, visit, node)
+    }
+  }
 }
 
 /**

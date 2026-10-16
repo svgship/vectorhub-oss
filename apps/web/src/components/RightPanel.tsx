@@ -1,4 +1,5 @@
 import { lazy, Suspense, useState } from 'react'
+import { PropertiesPanel } from './PropertiesPanel'
 import { StructureTree } from './StructureTree'
 
 /** 代码面板很重（Monaco），拆成独立 chunk，别拖慢首屏。 */
@@ -51,11 +52,7 @@ export function RightPanel() {
           </div>
         ) : null}
 
-        {tab === 'properties' ? (
-          <p className="p-3 text-xs leading-relaxed text-slate-500">
-            属性面板待实现：填充、描边、线性/径向渐变、透明度、尺寸与位置。
-          </p>
-        ) : null}
+        {tab === 'properties' ? <PropertiesPanel /> : null}
       </div>
     </aside>
   )

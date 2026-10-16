@@ -7,7 +7,7 @@ import {
   createDocument,
   createNode,
   mapNodes,
-  walkNodes,
+  walkVisibleNodes,
   type AttrValue,
   type Point,
   type VectorDocument,
@@ -144,7 +144,8 @@ export const useEditorStore = create<EditorState>((set) => ({
   selectAll: () =>
     set((state) => {
       const ids: string[] = []
-      walkNodes(state.document.root, (node) => {
+      // defs 里的渐变定义不是可编辑对象，不该被全选进来。
+      walkVisibleNodes(state.document.root, (node) => {
         ids.push(node.id)
       })
       return { selection: ids }

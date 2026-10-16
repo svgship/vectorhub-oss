@@ -39,15 +39,13 @@ export interface Exporter {
 
 export const SVG_NS = 'http://www.w3.org/2000/svg'
 
-/** 会被 `currentColor` 替换的绘制属性。 */
-const COLOR_ATTRS = new Set([
-  'color',
-  'fill',
-  'stroke',
-  'stop-color',
-  'flood-color',
-  'lighting-color',
-])
+/**
+ * 会被 `currentColor` 替换的绘制属性。
+ *
+ * 故意不含 `stop-color`：渐变的色标一旦被全部换成 currentColor，
+ * 多色渐变会塌成一个纯色块，图标也就毁了。渐变保留自己的颜色。
+ */
+const COLOR_ATTRS = new Set(['color', 'fill', 'stroke', 'flood-color', 'lighting-color'])
 
 const PASS_THROUGH_COLORS = new Set(['none', 'transparent', 'currentColor', 'inherit'])
 

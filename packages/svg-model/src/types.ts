@@ -17,6 +17,9 @@ export type VectorNodeType =
   | 'defs'
   | 'symbol'
   | 'use'
+  | 'linearGradient'
+  | 'radialGradient'
+  | 'stop'
 
 export type AttrValue = string | number
 
