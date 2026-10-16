@@ -1,6 +1,7 @@
 import { useMemo, type PointerEvent as ReactPointerEvent } from 'react'
 import { useEditorStore, ZOOM_FACTOR } from '@vectorhub/editor-core'
 import { findNode, getNodeBounds, unionBounds, type ResizeHandle } from '@vectorhub/svg-model'
+import { useMarqueeSelect } from '../hooks/useMarqueeSelect'
 import { useNodeDrag } from '../hooks/useNodeDrag'
 import { usePanZoom } from '../hooks/usePanZoom'
 import { SHAPE_PRESETS } from '../lib/sample-shapes'
@@ -53,6 +54,7 @@ export function Canvas() {
     zoomTo,
   } = usePanZoom()
   const { beginMove, beginResize, isDragging, guides } = useNodeDrag()
+  const { beginMarquee, isMarqueeing, rect: marqueeRect } = useMarqueeSelect()
 
   const artboardLabel = `${formatLength(artboard.width)} × ${formatLength(artboard.height)}`
 
@@ -80,7 +82,9 @@ export function Canvas() {
     const nodeId = target?.closest('[data-node-id]')?.getAttribute('data-node-id') ?? null
 
     if (!nodeId) {
-      if (!event.shiftKey) clearSelection()
+      // 空白处按下即开始框选；非选择工具（钢笔 / 文本）退回到「点空白处取消选择」。
+      if (tool === 'select') beginMarquee(event)
+      else if (!event.shiftKey) clearSelection()
       return
     }
     if (event.shiftKey) {
@@ -104,7 +108,15 @@ export function Canvas() {
     beginResize(event, handle, selectionBounds, selection, viewport)
   }
 
-  const cursor = isPanning ? 'grabbing' : isDragging ? 'move' : isSpaceDown ? 'grab' : 'default'
+  const cursor = isPanning
+    ? 'grabbing'
+    : isDragging
+      ? 'move'
+      : isMarqueeing
+        ? 'crosshair'
+        : isSpaceDown
+          ? 'grab'
+          : 'default'
 
   return (
     <main
@@ -159,13 +171,30 @@ export function Canvas() {
               bounds={selectionBounds}
               nodeBounds={selection.length > 1 ? selectionRects : []}
               zoom={viewport.zoom}
-              showHandles={tool === 'select' && !readOnly}
+              // 框选过程中只跟随描边：此刻的包围盒还在跳，手柄既点不到也碍眼。
+              showHandles={tool === 'select' && !readOnly && !isMarqueeing}
               onHandlePointerDown={handleHandlePointerDown}
             />
           ) : null}
 
           <SnapGuides guides={guides} zoom={viewport.zoom} />
         </g>
+
+        {/* 选框画在缩放容器外面，直接用屏幕像素，蚂蚁线的粗细与爬动速度不随缩放变化。 */}
+        {marqueeRect ? (
+          <rect
+            className="vh-marquee"
+            x={marqueeRect.x * viewport.zoom + viewport.x}
+            y={marqueeRect.y * viewport.zoom + viewport.y}
+            width={marqueeRect.width * viewport.zoom}
+            height={marqueeRect.height * viewport.zoom}
+            fill="rgba(56, 189, 248, 0.12)"
+            stroke="#38bdf8"
+            strokeWidth={1}
+            strokeDasharray="6 4"
+            pointerEvents="none"
+          />
+        ) : null}
       </svg>
 
       <div className="absolute left-3 top-3 flex items-center gap-0.5 rounded-lg border border-slate-800 bg-slate-900/90 p-1 backdrop-blur">

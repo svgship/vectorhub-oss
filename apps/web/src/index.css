@@ -24,3 +24,14 @@ body {
     'Microsoft YaHei',
     sans-serif;
 }
+
+/* 框选选框的蚂蚁线：虚线周期固定 10px（6 + 4），位移动画正好走一个周期，所以循环无缝。 */
+.vh-marquee {
+  animation: vh-marquee-ants 0.6s linear infinite;
+}
+
+@keyframes vh-marquee-ants {
+  to {
+    stroke-dashoffset: -10;
+  }
+}

@@ -97,6 +97,32 @@ export function unionBounds(rects: readonly Rect[]): Rect | null {
   return { x: minX, y: minY, width: maxX - minX, height: maxY - minY }
 }
 
+/**
+ * 由任意两个对角点构造标准矩形，宽高恒为非负。
+ *
+ * 框选是从按下点拖到当前点，两个点谁左谁右都有可能，所以先在这里归一化。
+ */
+export function rectFromPoints(a: Point, b: Point): Rect {
+  return {
+    x: Math.min(a.x, b.x),
+    y: Math.min(a.y, b.y),
+    width: Math.abs(a.x - b.x),
+    height: Math.abs(a.y - b.y),
+  }
+}
+
+/**
+ * 两个矩形是否相交（相切也算）。
+ *
+ * 用 `<=` 而不是 `<`：水平 / 垂直直线的宽或高是 0，
+ * 严格相交会让它们永远选不中。
+ */
+export function rectsIntersect(a: Rect, b: Rect): boolean {
+  return (
+    a.x <= b.x + b.width && b.x <= a.x + a.width && a.y <= b.y + b.height && b.y <= a.y + a.height
+  )
+}
+
 /** 单个节点的包围盒；无法从属性推导时返回 null。 */
 export function getNodeBounds(node: VectorNode): Rect | null {
   switch (node.type) {

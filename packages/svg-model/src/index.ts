@@ -1,6 +1,7 @@
 export * from './types'
 export * from './document'
 export * from './geometry'
+export * from './selection'
 export * from './resize'
 export * from './snapping'
 export * from './align'
